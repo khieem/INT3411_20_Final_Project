@@ -1,10 +1,10 @@
 # Báo cáo cuối kỳ Xử lý tiếng nói <br> **Trò chơi rắn săn mồi điều khiển bằng giọng nói**
 
-## Nhóm 13 : 
-- Tần Lê Nghĩa - 18020949
-- Nguyễn Văn Khiêm - 18020715	
+## Nhóm 13
 - Nguyễn Quốc Khánh - 18020685
+- Nguyễn Văn Khiêm - 18020715
 - Lê Kim Long - 18020852
+- Tần Lê Nghĩa - 18020949
 
 ## Tổng quan
 
@@ -26,7 +26,7 @@ Sơ đồ của một khối LSTM được thể hiện ở hình trên. Một c
 
 * Cổng vào $i_t$ quyết định bao nhiêu lượng thông tin đầu vào sẽ ảnh hưởng đến trạng thái mới.
 * Cổng quên $f_t$ quyết định sẽ bỏ đi bao nhiêu lượng thông tin đến từ trạng thái trước đó.
-* Cổng ra $o_t$ điều chỉnh lượng thông tin có thể ra ngoài​ và lượng thông tin truyền tới trạng thái tiếp theo.
+* Cổng ra $o_t$ điều chỉnh lượng thông tin có thể ra ngoài và lượng thông tin truyền tới trạng thái tiếp theo.
 * $h_t$, $c_t$, $x_t$ lần lượt là trạng thái ẩn (hidden state), cell state và đầu vào tại thời điểm $t$. $C_t$ đóng vai trò là bộ nhớ dài hạn, $h_t$ là phần bộ nhớ ngắn hạn trong khối. $C_t$ và $h_t$ có thể được sử dụng để lan truyền tới khối LSTM tiếp theo.
 
 ### Kiến trúc mô hình
@@ -35,10 +35,10 @@ Mô hình dùng để huấn luyện bao gồm 1 lớp LSTM và 1 lớp Fully Co
 
 ### Các tham số
 
-* Số khối LSTM nối tiếp nhau trong lớp LSTM: $num\_layer=3$.
-* Các đoạn âm thanh có số chiều khác nhau, do đó $batch\_size$ bằng $1$.
-* Kích thước của hidden state và cell state: $hidden\_size=64$ (có được qua thử và sai). Như vậy shape của $h_t$ và $C_t$ là $[3,1,64]$. Trong đó $3, 1, 64$ lần lượt là $num\_layer$, $batch\_size$ và $hidden\_size$
-* Kích thước dữ liệu đầu vào: $[1, l, 20]$. Trong đó $l=\frac{audiolen*sr}{hop}=\frac{audiolen*22050}{512}$; $20$ là số hệ số MFCC.
+* Số khối LSTM nối tiếp nhau trong lớp LSTM: $num\\_layer=3$.
+* Các đoạn âm thanh có số chiều khác nhau, do đó $batch\\_size$ bằng $1$.
+* Kích thước của hidden state và cell state: $hidden\\_size=64$. Như vậy shape của $h_t$ và $C_t$ là $3,1,64$, lần lượt là $num\\_layer$, $batch\\_size$ và $hidden\\_size$
+* Kích thước dữ liệu đầu vào: $\[1, l, 20\]$. Trong đó $l=\frac{audiolen\*sr}{hop}=\frac{audiolen\*22050}{512}$; $20$ là số hệ số MFCC.
 * Đầu ra có shape $[1, l, 64]$.
 * Đầu ra này sau đó được lan truyền tới lớp FC dùng để phân loại. Lớp FC có số đặc trưng đầu vào là 64 do chúng mang thông tin của các thời điểm trước, chỉ cần thực hiện decode tại thời điểm cuối cùng của chuỗi đầu ra LSTM. Số lớp đầu ra của FC là 4 tương ứng số lượng khẩu lệnh cần nhận diện: lên, xuống, trái, phải.
 
@@ -91,5 +91,5 @@ Dựa vào kết quả từ thực tế, nhóm em rút ra nhận xét như sau:
 * Khẩu lệnh "trái" thường xuyên sai hơn. Nhóm em đã thử phát âm nhiều lần và nhận thấy nếu phát âm "trái" nhanh và cao thì xác suất đúng sẽ tăng lên rất nhiều, trong khi nếu hạ thấp tông giọng sẽ cho kết quả rất tệ. Điều này cũng ít nhiều xảy ra với 3 khẩu lệnh còn lại. Có lẽ điều này đến từ việc nhóm em chưa nghĩ đến việc dùng time-stretch và pitch-shift để augment, dẫn đến việc mô hình khá nhạy cảm với cao độ và tốc độ phát âm.
 
 ## Lưu ý cài đặt
-Trước khi tải file về cần tắt window defender để có thẻ tải được file
-Lý do: Do project sử dụng keyboardListener của pynput nó chạy độc lập trên 1 thread và không tương tác gì với thread chính nên window cho rằng file đang keylog nên window cho rằng file có viruss nên không cho phép tải xuống
+
+Dự án sử dụng thư viện *pynput* để bắt sự kiện bàn phím. Điều này khiến cho file *ran.py* có thể bị nhận diện là KeyLogger bởi phần mềm diệt virus. Để chạy, cần thêm ngoại lệ cho *ran.py*.
